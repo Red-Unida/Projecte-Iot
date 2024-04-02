@@ -9,7 +9,7 @@
 const char* mqttServer = "10.0.110.115";
 const int mqttPort = 1883; 
 
-//prueba
+
  #define oled 32
  Adafruit_SSD1306 display = Adafruit_SSD1306(128, oled, &Wire);
 
