@@ -1,14 +1,19 @@
 #include <WiFi.h>
-#include <WebServer.h>
-#include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "PubSubClient.h"
+#include <ArduinoJson.h>
+#include <WiFiClientSecure.h>
+#include <UniversalTelegramBot.h>
 
 // Configuración de la red WiFi
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
+
+//token telegram
+const char* telegramToken = "7043088073:AAGfb63Uae1k_n6b78JTPpUdCHVAT7zytVA";
+#define CHAT_ID "-1002117470566" // ID del chat donde se quiere recibir las notificaciones
 
 // Servidor MQTT
 const char* mqttServer = "broker.emqx.io";
@@ -18,7 +23,17 @@ const char* mqttPassword = "redunida";
 
 // Cliente MQTT
 WiFiClient espClient;
+
 PubSubClient client(espClient);
+
+// Instancia del bot de Telegram
+WiFiClientSecure secured_client;
+UniversalTelegramBot bot(telegramToken, secured_client);
+
+
+
+#define TELEGRAM_DEBUG 1
+#define _debug
 
 // Pantalla OLED
 #define OLED_PIN 32
@@ -108,6 +123,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // Puedes agregar tu propia lógica aquí
 }
 
+
+
 void reconnect() {
   // Reconectar al servidor MQTT solo si no está conectado
   if (!client.connected()) {
@@ -130,6 +147,7 @@ void setup() {
 
   // Conexión a la red WiFi
   WiFi.begin(ssid, password);
+  secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT); // Add root certificate for api.telegram.org
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Conectando a WiFi...");
@@ -197,26 +215,33 @@ void loop() {
   }
 
   // Publicar mensaje MQTT dependiendo del estado del sensor
-  if (movimiento == HIGH) {
-    client.publish("tu_topic", "Movimiento detectado"); // Reemplazar "tu_topic" por tu topico
-  } else {
-    client.publish("tu_topic", "Sin movimiento"); // Reemplazar "tu_topic" por tu topico
-  }
+if (movimiento == HIGH) {
+  client.publish("tu_topic", "Movimiento detectado"); // Reemplazar "tu_topic" por tu tópico
+} else {
+  client.publish("tu_topic", "Sin movimiento"); // Reemplazar "tu_topic" por tu tópico
+}
 
-  // Actualizar la pantalla OLED
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.print("Sensor: ");
+// Actualizar la pantalla OLED
+display.clearDisplay();
+display.setCursor(0, 0);
+display.print("Sensor: ");
 
-  if (movimiento == HIGH) {
-    display.println("ON");
-    display.println("Hay movimiento");
-  } else {
-    display.println("OFF");
-    display.println("No hay movimiento");
-  }
+if (movimiento == HIGH) {
+  display.println("ON");
+  display.println("Hay movimiento");
+} else {
+  display.println("OFF");
+  display.println("No hay movimiento");
+}
+display.clearDisplay();
+display.display();
 
-  display.display();
+// Comprobación de detección de movimiento
+if (movimiento == HIGH) { // Si se ha detectado movimiento...
+   bot.sendMessage(CHAT_ID, "🚨 Movimiento Detectado 🚨", ""); // Envío de una notificación a Telegram
+  Serial.println("🚨 Movimiento Detectado 🚨"); // Se muestra el mismo mensaje en la consola
+}
 
-  delay(500);
+// Delay para permitir que la pantalla se muestre
+delay(200);
 }
