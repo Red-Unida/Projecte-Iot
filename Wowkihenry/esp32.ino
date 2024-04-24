@@ -12,8 +12,8 @@ const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
 //token telegram
-const char* telegramToken = "7043088073:AAGfb63Uae1k_n6b78JTPpUdCHVAT7zytVA";
-#define CHAT_ID "-1002117470566" // ID del chat donde se quiere recibir las notificaciones
+const char* telegramToken = "";
+#define CHAT_ID "" // ID del chat donde se quiere recibir las notificaciones
 
 // Servidor MQTT
 const char* mqttServer = "broker.emqx.io";
