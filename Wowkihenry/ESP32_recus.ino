@@ -13,8 +13,8 @@ const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
 //token telegram
-const char* telegramToken = "7043088073:AAGfb63Uae1k_n6b78JTPpUdCHVAT7zytVA";
-#define CHAT_ID "-1002117470566" // ID del chat donde se quiere recibir las notificaciones
+const char* telegramToken = "";
+#define CHAT_ID "" // ID del chat donde se quiere recibir las notificaciones
 
 
 // Servidor MQTT
@@ -214,7 +214,20 @@ void loop() {
     digitalWrite(buzzerPin, HIGH); // Encender el buzzer
     tone(buzzerPin, 1000); // Empezar a sonar el buzzer a 1kHz
 
-    
+// Emitir un sonido de alarma alternando entre dos tonos
+    for (int i = 0; i < 3; i++) {
+      tone(buzzerPin, 1000); // Empezar a sonar el buzzer a 1kHz
+      delay(250); // Sonar durante 250ms
+      noTone(buzzerPin); // Detener el sonido
+      delay(250); // Pausa de 250ms
+      tone(buzzerPin, 1500); // Cambiar a un tono más alto de 1.5kHz
+      delay(250); // Sonar durante 250ms
+      noTone(buzzerPin); // Detener el sonido
+      if (i < 2) { // Pausa entre las repeticiones de la alarma
+        delay(250); // Pausa de 250ms
+      }
+    }
+
   } else {
     digitalWrite(ledPin, LOW); //Apagar el LED
     digitalWrite(buzzerPin, LOW); // Apagar el buzzer
