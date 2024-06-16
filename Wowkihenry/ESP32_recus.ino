@@ -212,10 +212,16 @@ void loop() {
   if (movimiento == HIGH) {
     digitalWrite(ledPin, HIGH); // Encender el LED
     digitalWrite(buzzerPin, HIGH); // Encender el buzzer
+    tone(buzzerPin, 1000); // Empezar a sonar el buzzer a 1kHz
+
+    
   } else {
     digitalWrite(ledPin, LOW); //Apagar el LED
     digitalWrite(buzzerPin, LOW); // Apagar el buzzer
+    noTone(buzzerPin); // Detener el sonido del buzzer
   }
+
+    
 
   // Publicar mensaje MQTT dependiendo del estado del sensor
 if (movimiento == HIGH) {
@@ -239,7 +245,7 @@ if (movimiento == HIGH) {
 
 display.display();
 
-// Comprobación de detección de movimiento
+// Comprobación de detección de movimiento telegram
 if (movimiento == HIGH) { // Si se ha detectado movimiento...
    bot.sendMessage(CHAT_ID, "🚨 Movimiento Detectado 🚨", ""); // Envío de una notificación a Telegram
   Serial.println("🚨 Movimiento Detectado 🚨"); // Se muestra el mismo mensaje en la consola
